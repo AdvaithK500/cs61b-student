@@ -32,4 +32,18 @@ public class Confusing {
 
 TODO: Write output here
 
+we enter the main()
+I am method 1
+I am method 1
+I am method 2
+I am method 3
+I am method 1
+I am method 1
+I am method 2
+I am method 1
+I am method 2
+I am method 3
+I am method 1
+
+
 Then, click the green play button to check your work. */

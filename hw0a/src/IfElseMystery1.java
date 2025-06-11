@@ -30,5 +30,6 @@ public class IfElseMystery1 {
 /* Before running the code, type your answer below.
 
 TODO: Write output here
+z = 13, y = 21 => 13 21
 
 Then, click the green play button to check your work. */

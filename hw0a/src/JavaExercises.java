@@ -13,6 +13,13 @@ public class JavaExercises {
      */
     public static void starTriangle() {
         // TODO: Fill in this function
+        // a for loop that prints i + 1 stars for line i, i starts from 0
+        for (int i = 0; i < 5; i++) {
+           for (int j = 0; j <= i ; j++) {
+               System.out.print("*");
+           }
+           System.out.println();
+        }
     }
 
     /**
@@ -21,6 +28,12 @@ public class JavaExercises {
      */
     public static void printIndexed(String s) {
         // TODO: Fill in this function
+        // print the char then print the index which is s.length() - i - 1 for i = 0 to s.length() - 1
+        for (int i = 0; i < s.length(); i++) {
+            int index =  s.length() - i - 1;
+            System.out.print(s.charAt(i) + "" + index);
+        }
+        System.out.println();
     }
 
     /**
@@ -29,7 +42,16 @@ public class JavaExercises {
      */
     public static String stutter(String s) {
         // TODO: Fill in this function
-        return null;
+        // for each character in s, have an inner loop that runs twice to print it
+        String newString = "";
+        for(int i = 0; i < s.length(); i++) {
+            for (int j = 0; j < 2; j++) {
+                newString += s.charAt(i);
+                System.out.print(s.charAt(i));
+            }
+        }
+        System.out.println();
+        return newString;
     }
 
     /**
@@ -43,7 +65,16 @@ public class JavaExercises {
      */
     public static int quadrant(int x, int y) {
         // TODO: Fill in this function
-        return 0;
+        if (x > 0 && y > 0) {
+            return 1;
+        } else if (x < 0 && y > 0) {
+            return 2;
+        } else if (x < 0 && y < 0) {
+            return 3;
+        } else if (x > 0 && y < 0) {
+            return 4;
+        }
+        return 0; //default case of x == 0 or y == 0
     }
 
     public static void main(String[] args) {

@@ -19,6 +19,7 @@ public class SpeciesListStage implements AdventureStage {
             "hummingbirds"  // Better, Faster, Lighter Java
     );
     private static final List<String> REFERENCE_3 = new ArrayList<>();
+    // THIS LIST IS EMPTY, so leads to an eventual / by 0 error in line 104 but why?
 
     private final In in;
     private final Map<String, AdventureStage> responses;
@@ -54,7 +55,7 @@ public class SpeciesListStage implements AdventureStage {
         this.handleResponses(REFERENCE_2);
 
         System.out.println("Well, there's nothing left here! press enter to move.");
-        this.handleResponses(REFERENCE_3);
+        this.handleResponses(REFERENCE_3); // THIS REFERENCE_3 LIST SIZE = 0 ! POSSIBLE / BY 0 ERROR STEMS HERE
     }
 
     @Override
@@ -76,7 +77,13 @@ public class SpeciesListStage implements AdventureStage {
             } else {
                 user = Arrays.asList(input.toLowerCase().split(" *, *"));
             }
-            double similarity = arraySimilarity(reference, user);
+            // handle the reference being of size 0 i.e. reference is empty logic here
+            if (reference.isEmpty()) {
+                break;
+            }
+            double similarity = arraySimilarity(reference, user); // reference size == 0 for REFERENCE_3
+            // the above line breaks, similarity doesnt have any value
+            // we are not entering the if statement below!
             if (similarity != 1 && reference.size() != 0) {
                 long numCorrect = Math.round(similarity * reference.size());
                 System.out.println("Try again! You got " + numCorrect + " animals correct!");
@@ -101,6 +108,6 @@ public class SpeciesListStage implements AdventureStage {
                 copy.remove(o);
             }
         }
-        return similarObjects / listOne.size();
+        return similarObjects / listOne.size(); // ListOne size is 0 when listOne is REFERENCE_3
     }
 }

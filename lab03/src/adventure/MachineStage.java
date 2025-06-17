@@ -118,8 +118,8 @@ public class MachineStage implements AdventureStage {
         }
         int[] returnArray = new int[a.length];
         for (int i = 0; i < a.length; i += 1) {
-            int biggerValue = mysteryMax(a[i], b[i]);
-            returnArray[i] = biggerValue;
+            int biggerValue = Math.max(b[i], a[i]);
+            returnArray[i] = biggerValue; // mysteryMax is wrong
         }
 
         return returnArray;
@@ -132,7 +132,7 @@ public class MachineStage implements AdventureStage {
         int i = 0;
         int sum = 0;
         while (i < x.length) {
-            sum = sum + mysteryAdd(sum, x[i]);
+            sum = sum + x[i];
             i = i + 1;
         }
         return sum;
@@ -145,7 +145,7 @@ public class MachineStage implements AdventureStage {
      */
     public static int sumOfElementwiseMax(int[] a, int[] b) {
         int[] maxes = arrayMax(a, b);
-        int sumofMaxes = arraySum(maxes);
+        int sumofMaxes = arraySum(maxes); // maxes is fixed( 2nd error left likely in arraySum)
         return sumofMaxes;
     }
 }

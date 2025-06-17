@@ -20,8 +20,31 @@ public class GameLogic {
      */
     public static int moveTileUpAsFarAsPossible(int[][] board, int r, int c, int minR) {
         // TODO: Fill this in in tasks 2, 3, 4
+
+        // Task 2: ignoring minR, we move the tile specified by (r,c) in the up direction
+        // tile = board[r][c]
+        // we move the tile as far as possible
+        // the tile moves up until it reaches a nonzero element
+        // so the indexing is like board[r-1][c] to show it moved up
+        // and while r != -1 this keeps on going and break out when board[r-1][c] is != 0
+        int tile = board[r][c];
+        while (r != -1) {
+            if (r == 0 || board[r-1][c] != 0) {
+                break;
+            }
+            board[r-1][c] = tile;
+            board[r][c] = 0;
+            r--;
+        }
+
         return 0;
     }
+
+    // 3 rules to implement the max tile movement upwards
+    /*
+     * if Tile_i, Tile_j are adjacent,
+     *
+     * */
 
     /**
      * Modifies the board to simulate the process of tilting column c

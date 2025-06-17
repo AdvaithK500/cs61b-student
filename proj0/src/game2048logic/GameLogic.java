@@ -46,13 +46,13 @@ public class GameLogic {
     public static void tiltColumn(int[][] board, int c) {
         int minR = 0;
 
-        for (int r = board.length - 1; r >= 0; r--) {
+        for (int r = 0; r < board.length; r++) {
             if (board[r][c] != 0) {
                 int mergedRow = moveTileUpAsFarAsPossible(board, r, c, minR);
 
                 // ✅ FIXED: Only update minR if a merge occurred
                 if (mergedRow != 0) {
-                    minR = mergedRow - 1;
+                    minR = mergedRow;
                 }
             }
         }

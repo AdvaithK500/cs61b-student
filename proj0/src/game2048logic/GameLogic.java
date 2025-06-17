@@ -20,58 +20,57 @@ public class GameLogic {
      */
     public static int moveTileUpAsFarAsPossible(int[][] board, int r, int c, int minR) {
         int value = board[r][c];
-
-        //  Step 0: If the tile is zero, do nothing
         if (value == 0) return 0;
 
-        //  Step 1: find the targetRow to Slide tile up to, through empty cells
-        // We look upward until we hit a non-empty cell or the top row (row  == 0 case)
         int targetRow = r;
-        while (targetRow > 0 && targetRow > minR && board[targetRow - 1][c] == 0) {
+        while (targetRow > 0 && board[targetRow - 1][c] == 0) {
             targetRow--;
         }
 
-        //  Step 2: Try to merge with the tile above
-        // If we landed just below a tile of the same value, merge
-        if (targetRow > 0 && targetRow != minR && board[targetRow - 1][c] == value) {
-            board[targetRow - 1][c] *= 2;  // Merge: double the value
-            board[r][c] = 0;               // Clear original tile
-            return targetRow;              // Return merge location (1-based row)
+        if (targetRow > 0 && (targetRow - 1) >= minR && board[targetRow - 1][c] == value) {
+            board[targetRow - 1][c] *= 2;
+            board[r][c] = 0;
+            return targetRow; // 1-based return
         }
 
-        //  Step 3: this is task 2. If we couldn't merge, just move the tile to its new position
-        // Only do this if the tile moved at all (to an empty spot)
         if (targetRow != r) {
-            board[targetRow][c] = value;   // Move tile into empty space
-            board[r][c] = 0;               // Clear original position
+            board[targetRow][c] = value;
+            board[r][c] = 0;
         }
 
-        //  No merge happened, return 0 as specified by Task 3
         return 0;
     }
 
-
-    /**
-     * Modifies the board to simulate the process of tilting column c
-     * upwards.
-     *
-     * @param board     the current state of the board
-     * @param c         the column to tilt up.
-     */
     public static void tiltColumn(int[][] board, int c) {
-        // TODO: fill this in in task 5
-        return;
+        int minR = 0;
+        for (int r = board.length - 1; r >= 0; r--) {
+            if (board[r][c] != 0) {
+                int mergedRow = moveTileUpAsFarAsPossible(board, r, c, minR);
+                if (mergedRow != 0) {
+                    minR = mergedRow;  // mergedRow is already 1-based
+                }
+            }
+        }
+
+        // Compact the column
+        int writeRow = 0;
+        for (int readRow = 0; readRow < board.length; readRow++) {
+            if (board[readRow][c] != 0) {
+                if (readRow != writeRow) {
+                    board[writeRow][c] = board[readRow][c];
+                    board[readRow][c] = 0;
+                }
+                writeRow++;
+            }
+        }
     }
 
-    /**
-     * Modifies the board to simulate tilting all columns upwards.
-     *
-     * @param board     the current state of the board.
-     */
     public static void tiltUp(int[][] board) {
-        // TODO: fill this in in task 6
-        return;
+        for (int c = 0; c < board[0].length; c++) {
+            tiltColumn(board, c);
+        }
     }
+
 
     /**
      * Modifies the board to simulate tilting the entire board to

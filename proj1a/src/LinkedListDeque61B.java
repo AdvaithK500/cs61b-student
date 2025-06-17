@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+//import java.util.Currency;
 import java.util.List;
 
 public class LinkedListDeque61B<T> implements Deque61B<T> {
@@ -75,21 +76,61 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public T removeFirst() {
-        return null;
+        if (sentinel.next == sentinel) {
+            return null; // as the only element is sentinel node in the list
+        }
+        Node itemNode = sentinel.next;
+        sentinel.next = itemNode.next;
+        sentinel.next.prev = sentinel;
+        size--;
+        return itemNode.item;
     }
 
     @Override
     public T removeLast() {
-        return null;
+        if (sentinel.next == sentinel) {
+            return null; // as the only element is sentinel node in the list
+        }
+
+        Node itemNode = sentinel.prev;
+        itemNode.prev.next = sentinel;
+        sentinel.prev = itemNode.prev;
+        size--;
+
+        return itemNode.item;
     }
 
     @Override
     public T get(int index) {
-        return null;
+        if (index < 0 || index >= size) {
+            return null;
+        }
+        Node currPointer = sentinel.next;
+        int currentCount = 0;
+        T item = null;
+        while (currPointer != sentinel) {
+            if (currentCount == index) {
+                item = currPointer.item;
+            }
+            currentCount++;
+            currPointer = currPointer.next;
+        }
+        return item;
     }
 
     @Override
     public T getRecursive(int index) {
-        return null;
+        return getRecursiveHelper(sentinel.next, index);
+    }
+
+    private T getRecursiveHelper(Node start, int index) {
+        if (index < 0 || index >= size) {
+            return null;
+        } else if (index == 0) {
+            return start.item;
+        }
+
+
+        return getRecursiveHelper(start.next, index - 1);
     }
 }

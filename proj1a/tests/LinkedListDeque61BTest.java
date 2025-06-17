@@ -3,97 +3,192 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 
-/** Performs some basic linked list tests. */
 public class LinkedListDeque61BTest {
 
-     @Test
-     /** In this test, we have three different assert statements that verify that addFirst works correctly. */
-     public void addFirstTestBasic() {
-         Deque61B<String> lld1 = new LinkedListDeque61B<>();
-
-         lld1.addFirst("back"); // after this call we expect: ["back"]
-         assertThat(lld1.toList()).containsExactly("back").inOrder();
-
-         lld1.addFirst("middle"); // after this call we expect: ["middle", "back"]
-         assertThat(lld1.toList()).containsExactly("middle", "back").inOrder();
-
-         lld1.addFirst("front"); // after this call we expect: ["front", "middle", "back"]
-         assertThat(lld1.toList()).containsExactly("front", "middle", "back").inOrder();
-
-         /* Note: The first two assertThat statements aren't really necessary. For example, it's hard
-            to imagine a bug in your code that would lead to ["front"] and ["front", "middle"] failing,
-            but not ["front", "middle", "back"].
-          */
-     }
-
-     @Test
-     /** In this test, we use only one assertThat statement. IMO this test is just as good as addFirstTestBasic.
-      *  In other words, the tedious work of adding the extra assertThat statements isn't worth it. */
-     public void addLastTestBasic() {
-         Deque61B<String> lld1 = new LinkedListDeque61B<>();
-
-         lld1.addLast("front"); // after this call we expect: ["front"]
-         lld1.addLast("middle"); // after this call we expect: ["front", "middle"]
-         lld1.addLast("back"); // after this call we expect: ["front", "middle", "back"]
-         assertThat(lld1.toList()).containsExactly("front", "middle", "back").inOrder();
-     }
-
-     @Test
-     /** This test performs interspersed addFirst and addLast calls. */
-     public void addFirstAndAddLastTest() {
-         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
-
-         /* I've decided to add in comments the state after each call for the convenience of the
-            person reading this test. Some programmers might consider this excessively verbose. */
-         lld1.addLast(0);   // [0]
-         lld1.addLast(1);   // [0, 1]
-         lld1.addFirst(-1); // [-1, 0, 1]
-         lld1.addLast(2);   // [-1, 0, 1, 2]
-         lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
-
-         assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
-     }
-
-    // Below, you'll write your own tests for LinkedListDeque61B.
     @Test
-    /** This test checks the results of isEmpty() on an empty and non empty list*/
-    public void testIsEmpty() {
-        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+    public void addFirstTestBasic() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
 
-        assertThat(lld1.isEmpty()).isTrue(); // check if a 0 length list returns true
+        lld1.addFirst("back");
+        assertThat(lld1.toList()).containsExactly("back").inOrder();
 
-        lld1.addFirst(9);
-        assertThat(lld1.isEmpty()).isFalse(); // check if a 1 length list returns false
+        lld1.addFirst("middle");
+        assertThat(lld1.toList()).containsExactly("middle", "back").inOrder();
 
-        lld1.addLast(9);
-        assertThat(lld1.isEmpty()).isFalse(); // check if a k > 1 length list returns false
+        lld1.addFirst("front");
+        assertThat(lld1.toList()).containsExactly("front", "middle", "back").inOrder();
     }
 
     @Test
-    /** This test checks the results of size() on an empty and non empty list*/
-    public void testSize() {
+    public void addLastTestBasic() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
+
+        lld1.addLast("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+        assertThat(lld1.toList()).containsExactly("front", "middle", "back").inOrder();
+    }
+
+    @Test
+    public void addFirstAndAddLastTest() {
         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
 
-        // test size on a 0 length list
+        lld1.addLast(0);
+        lld1.addLast(1);
+        lld1.addFirst(-1);
+        lld1.addLast(2);
+        lld1.addFirst(-2);
+
+        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
+    }
+
+    @Test
+    public void testIsEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        assertThat(lld1.isEmpty()).isTrue();
+
+        lld1.addFirst(9);
+        assertThat(lld1.isEmpty()).isFalse();
+
+        lld1.addLast(9);
+        assertThat(lld1.isEmpty()).isFalse();
+    }
+
+    @Test
+    public void testSize() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
         assertThat(lld1.size()).isEqualTo(0);
-        //test size on a k = 1 length list
+
         lld1.addFirst(0);
         assertThat(lld1.size()).isEqualTo(1);
-        //test size on a k > 1 length list
+
         lld1.addFirst(-1);
         lld1.addLast(2);
         assertThat(lld1.size()).isEqualTo(3);
     }
 
-    // Can check the test case below when remove methods have been tested for correctly
-//    @Test
-//    /** This test checks if isEmpty() and size() work even when interleaved calls occur*/
-//    public void testIsEmptyAndSize() {
-//        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
-//        // one test case that checks if adding 1 element and removing 1 element gives size 0 and isEmpty true
-//        lld1.addFirst(5);
-//        // one test case that checks if adding 2 elements and removing 1 element gives size 1 and isEmpty false
-//    }
+    @Test
+    public void testGet() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        assertThat(lld1.get(-2)).isEqualTo(null);
+        lld1.addFirst(1);
+        assertThat(lld1.get(0)).isEqualTo(1);
+
+        lld1.addLast(2);
+        lld1.addFirst(0);
+        assertThat(lld1.get(2)).isEqualTo(2);
+        assertThat(lld1.get(3)).isEqualTo(null);
+        assertThat(lld1.get(100)).isEqualTo(null);
+    }
+
+    @Test
+    public void testGetRecursive() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        assertThat(lld1.getRecursive(-2)).isEqualTo(null);
+        lld1.addFirst(1);
+        assertThat(lld1.getRecursive(0)).isEqualTo(1);
+
+        lld1.addLast(2);
+        lld1.addFirst(0);
+        assertThat(lld1.getRecursive(2)).isEqualTo(2);
+        assertThat(lld1.getRecursive(3)).isEqualTo(null);
+        assertThat(lld1.getRecursive(100)).isEqualTo(null);
+    }
+
+    @Test
+    public void testRemoveFirst() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        lld1.addLast(0);
+        lld1.addLast(1);
+        lld1.addFirst(-1);
+        lld1.addLast(2);
+        lld1.addFirst(-2);
+
+        lld1.removeFirst();
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(0, 1, 2).inOrder();
+    }
+
+    @Test
+    public void testRemoveLast() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        lld1.addLast(0);
+        lld1.addLast(1);
+        lld1.addFirst(-1);
+        lld1.addLast(2);
+        lld1.addFirst(-2);
+
+        lld1.removeLast();
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-2, -1, 0).inOrder();
+    }
+
+    @Test
+    public void testIsEmptyAndSize() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst(5);
+        lld1.removeFirst();
+        assertThat(lld1.size()).isEqualTo(0);
+        assertThat(lld1.isEmpty()).isTrue();
+
+        lld1.addFirst(0);
+        lld1.addFirst(-1);
+        lld1.removeLast();
+        assertThat(lld1.size()).isEqualTo(1);
+        assertThat(lld1.isEmpty()).isFalse();
+    }
+
+    @Test
+    public void testRemoveLastToEmpty() {
+        Deque61B<Integer> deque = new LinkedListDeque61B<>();
+        deque.addLast(1);
+        deque.addLast(2);
+        deque.removeLast();
+        deque.removeLast();
+        assertThat(deque.isEmpty()).isTrue();
+        assertThat(deque.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testRemoveFirstToOne() {
+        Deque61B<Integer> deque = new LinkedListDeque61B<>();
+        deque.addLast(1);
+        deque.addLast(2);
+        deque.addLast(3);
+        deque.removeFirst();
+        deque.removeFirst();
+        assertThat(deque.size()).isEqualTo(1);
+        assertThat(deque.toList()).containsExactly(3).inOrder();
+    }
+
+    @Test
+    public void testRemoveLastToOne() {
+        Deque61B<Integer> deque = new LinkedListDeque61B<>();
+        deque.addLast(1);
+        deque.addLast(2);
+        deque.addLast(3);
+        deque.removeLast();
+        deque.removeLast();
+        assertThat(deque.size()).isEqualTo(1);
+        assertThat(deque.toList()).containsExactly(1).inOrder();
+    }
+
+    @Test
+    public void testSizeAfterRemoveFromEmpty() {
+        Deque61B<Integer> deque = new LinkedListDeque61B<>();
+        deque.removeFirst();
+        deque.removeLast();
+        assertThat(deque.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testToListEmpty() {
+        Deque61B<Integer> deque = new LinkedListDeque61B<>();
+        assertThat(deque.toList()).isEmpty();
+    }
 }

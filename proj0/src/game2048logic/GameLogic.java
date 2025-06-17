@@ -19,32 +19,37 @@ public class GameLogic {
      *              if no merge occurs, then return 0.
      */
     public static int moveTileUpAsFarAsPossible(int[][] board, int r, int c, int minR) {
-        // TODO: Fill this in in tasks 2, 3, 4
+        int value = board[r][c];
 
-        // Task 2: ignoring minR, we move the tile specified by (r,c) in the up direction
-        // tile = board[r][c]
-        // we move the tile as far as possible
-        // the tile moves up until it reaches a nonzero element
-        // so the indexing is like board[r-1][c] to show it moved up
-        // and while r != -1 this keeps on going and break out when board[r-1][c] is != 0
-        int tile = board[r][c];
-        while (r != -1) {
-            if (r == 0 || board[r-1][c] != 0) {
-                break;
-            }
-            board[r-1][c] = tile;
-            board[r][c] = 0;
-            r--;
+        //  Step 0: If the tile is zero, do nothing
+        if (value == 0) return 0;
+
+        //  Step 1: find the targetRow to Slide tile up to, through empty cells
+        // We look upward until we hit a non-empty cell or the top row (row  == 0 case)
+        int targetRow = r;
+        while (targetRow > 0 && targetRow > minR && board[targetRow - 1][c] == 0) {
+            targetRow--;
         }
 
+        //  Step 2: Try to merge with the tile above
+        // If we landed just below a tile of the same value, merge
+        if (targetRow > 0 && targetRow != minR && board[targetRow - 1][c] == value) {
+            board[targetRow - 1][c] *= 2;  // Merge: double the value
+            board[r][c] = 0;               // Clear original tile
+            return targetRow;              // Return merge location (1-based row)
+        }
+
+        //  Step 3: this is task 2. If we couldn't merge, just move the tile to its new position
+        // Only do this if the tile moved at all (to an empty spot)
+        if (targetRow != r) {
+            board[targetRow][c] = value;   // Move tile into empty space
+            board[r][c] = 0;               // Clear original position
+        }
+
+        //  No merge happened, return 0 as specified by Task 3
         return 0;
     }
 
-    // 3 rules to implement the max tile movement upwards
-    /*
-     * if Tile_i, Tile_j are adjacent,
-     *
-     * */
 
     /**
      * Modifies the board to simulate the process of tilting column c

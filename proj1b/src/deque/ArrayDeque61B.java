@@ -29,6 +29,9 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     }
     @Override
     public void addFirst(T x) {
+        if (size >= items.length) {
+            resizeUp();
+        }
         items[nextFirst] = x;
         nextFirst = Math.floorMod(nextFirst - 1, items.length);
         size++;
@@ -36,6 +39,10 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
 
     @Override
     public void addLast(T x) {
+        if (size >= items.length) {
+            resizeUp();
+        }
+
         items[nextLast] = x;
         nextLast = (nextLast + 1) % items.length;
         size++;
@@ -70,6 +77,10 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
             return null;
         }
 
+        if (items.length >= 16 && size < items.length / 4) {
+            resizeDown();
+        }
+
         int removeAtIndex = Math.floorMod(nextFirst + 1, items.length);
         T itemToRemove = items[removeAtIndex];
         items[removeAtIndex] = null;
@@ -82,6 +93,10 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     public T removeLast() {
         if (size == 0) {
             return null;
+        }
+
+        if (items.length >= 16 && size < items.length / 4) {
+            resizeDown();
         }
 
         int removeAtIndex = Math.floorMod(nextLast - 1, items.length);
@@ -105,6 +120,77 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
 
     @Override
     public T getRecursive(int index) {
-        return null;
+        throw new UnsupportedOperationException("No need to implement getRecursive for proj 1b");
     }
+
+    private void resizeUp() {
+        int oldLen = items.length;
+        int newLen = oldLen * 2;
+        T[] newItems = (T[]) new Object[newLen];
+
+        int startNew = Math.floorMod(nextLast + size, newLen);
+        int oldIndex = Math.floorMod(nextFirst + 1, newLen);
+
+        for (int i = 0; i < size; i++) {
+            newItems[Math.floorMod(startNew + i, newLen)] = items[oldIndex];
+            oldIndex = Math.floorMod(oldIndex + 1, oldLen);
+        }
+
+        nextFirst = Math.floorMod(nextFirst + size, newLen);
+        items = newItems; // must point to the resized array now
+
+    }
+
+    private void resizeDown() {
+        int oldLen = items.length;
+        int newLen = oldLen / 2;
+        T[] newItems = (T[]) new Object[newLen];
+
+        int startNew = Math.floorMod(nextFirst / 2 - 1, newLen);  // or other wraparound-friendly anchor
+        int oldIndex = Math.floorMod(nextFirst + 1, oldLen);
+
+        for (int i = 0; i < size; i++) {
+            newItems[Math.floorMod(startNew + i, newLen)] = items[oldIndex];
+            oldIndex = (oldIndex + 1) % oldLen;
+        }
+
+        nextFirst = Math.floorMod(startNew - 1, newLen);
+        nextLast = Math.floorMod(startNew + size, newLen);
+        items = newItems;
+
+    }
+
+    public void clear() {
+        items = (T[]) new Object[8];
+        size = 0;
+        nextFirst = 4;
+        nextLast = 5;
+    }
+
+    public boolean checkInvariants() {
+        // Invariant 1: size is non-negative and does not exceed array length
+        if (size < 0 || size > items.length) return false;
+
+        // Invariant 2: nextFirst and nextLast are valid indices
+        if (nextFirst < 0 || nextFirst >= items.length) return false;
+        if (nextLast < 0 || nextLast >= items.length) return false;
+
+        // Invariant 3: Number of non-null elements == size
+        int nonNullCount = 0;
+        for (T item : items) {
+            if (item != null) nonNullCount++;
+        }
+        if (nonNullCount != size) return false;
+
+        // Invariant 4: items are stored contiguously in circular fashion
+        int index = Math.floorMod(nextFirst + 1, items.length);
+        for (int i = 0; i < size; i++) {
+            if (items[index] == null) return false;
+            index = Math.floorMod(index + 1, items.length);
+        }
+
+        return true;
+    }
+
+
 }

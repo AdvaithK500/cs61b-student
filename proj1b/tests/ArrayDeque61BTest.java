@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -229,5 +230,135 @@ public class ArrayDeque61BTest {
         assertThat(ad.toList()).containsExactly(1).inOrder();
     }
 
+    @Test
+    public void testResizeUpAddLast() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
 
+        // Fill up to capacity (8)
+        for (int i = 0; i < 8; i++) {
+            deque.addLast(i);
+        }
+
+        // Now trigger resize
+        deque.addLast(8);
+        deque.addLast(9);
+
+        // Assert correct size
+        assertThat(deque.toList()).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).inOrder();
+    }
+
+    @Test
+    public void testResizeUpAddFirst() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
+
+        // Fill using addFirst — reverse order
+        for (int i = 0; i < 8; i++) {
+            deque.addFirst(i);
+        }
+
+        // Force resize
+        deque.addFirst(8);
+        deque.addFirst(9);
+
+        // Reverse the expected order
+        assertThat(deque.toList()).containsExactly(9, 8, 7, 6, 5, 4, 3, 2, 1, 0).inOrder();
+    }
+
+    @Test
+    public void testResizeUpMixedAdds() {
+        Deque61B<String> deque = new ArrayDeque61B<>();
+
+        // Alternate adds
+        deque.addLast("c");
+        deque.addFirst("b");
+        deque.addLast("d");
+        deque.addFirst("a");
+        deque.addLast("e");
+        deque.addLast("f");
+        deque.addFirst("X");
+        deque.addFirst("Y");
+
+        // Fill capacity and force resize
+        deque.addLast("g");
+        deque.addFirst("Z");
+
+        assertThat(deque.toList()).containsExactly("Z", "Y", "X", "a", "b", "c", "d", "e", "f", "g").inOrder();
+    }
+
+    @Test
+    public void testWastefulArrayAfterShrink() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
+
+        for (int i = 0; i < 32; i++) {
+            deque.addLast(i);
+        }
+
+        for (int i = 0; i < 30; i++) {
+            deque.removeLast();
+        }
+
+        for (int i = 0; i < 20; i++) {
+            deque.addLast(i); // should crash or behave badly if array wasn't resized down
+        }
+
+        assertThat(deque.toList().size()).isEqualTo(22);
+    }
+
+    @Test
+    public void testRapidAddRemove() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
+
+        // Fill up with 100 elements to trigger multiple resizeUps
+        for (int i = 0; i < 100; i++) {
+            deque.addLast(i);
+        }
+        assertThat(deque.size()).isEqualTo(100);
+
+        // Remove 90 elements to trigger resizeDown (if implemented to halve at 1/4 size)
+        for (int i = 0; i < 90; i++) {
+            deque.removeFirst();
+        }
+
+        // Remaining elements should be 90 to 99
+        assertThat(deque.toList()).containsExactly(90,91,92,93,94,95,96,97,98,99).inOrder();
+        assertThat(deque.size()).isEqualTo(10);
+    }
+
+    @Test
+    public void testMixedAddRemoveResizing() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
+
+        // Add to front to reverse order
+        for (int i = 0; i < 64; i++) {
+            deque.addFirst(i);
+        }
+
+        // Remove from end and check order
+        for (int i = 0; i < 32; i++) {
+            assertThat(deque.removeLast()).isEqualTo(i);
+        }
+
+        // Check remaining 32 items in reverse
+        List<Integer> expected = new ArrayList<>();
+        for (int i = 63; i >= 32; i--) {
+            expected.add(i);
+        }
+        assertThat(deque.toList()).containsExactlyElementsIn(expected).inOrder();
+    }
+
+    @Test
+    public void testRepeatedResizingDown() {
+        Deque61B<Integer> deque = new ArrayDeque61B<>();
+
+        for (int round = 0; round < 5; round++) {
+            for (int i = 0; i < 128; i++) {
+                deque.addLast(i);
+            }
+            for (int i = 0; i < 120; i++) {
+                deque.removeFirst();  // Should cause multiple downsizes
+            }
+            assertThat(deque.size()).isEqualTo(8);
+            ((ArrayDeque61B<Integer>) deque).clear();  // You'll need to add a clear() method or remove all manually
+        }
+    }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -361,4 +362,36 @@ public class ArrayDeque61BTest {
             ((ArrayDeque61B<Integer>) deque).clear();  // You'll need to add a clear() method or remove all manually
         }
     }
+
+    @Test
+    public void testArrayDequeToString() {
+        ArrayDeque61B<String> ad = new ArrayDeque61B<>();
+        ad.addLast("front");
+        ad.addLast("middle");
+        ad.addLast("back");
+        assertThat(ad.toString()).isEqualTo("[front, middle, back]");
+    }
+
+    @Test
+    public void testArrayDequeEquals() {
+        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ArrayDeque61B<Integer> ad2 = new ArrayDeque61B<>();
+        ad1.addLast(1); ad1.addLast(2); ad1.addLast(3);
+        ad2.addLast(1); ad2.addLast(2); ad2.addLast(3);
+        assertThat(ad1.equals(ad2)).isTrue();
+    }
+
+    @Test
+    public void testArrayDequeIterator() {
+        ArrayDeque61B<Integer> ad = new ArrayDeque61B<>();
+        ad.addLast(10); ad.addLast(20); ad.addLast(30);
+
+        Iterator<Integer> iter = ad.iterator();
+        assertThat(iter.hasNext()).isTrue();
+        assertThat(iter.next()).isEqualTo(10);
+        assertThat(iter.next()).isEqualTo(20);
+        assertThat(iter.next()).isEqualTo(30);
+        assertThat(iter.hasNext()).isFalse();
+    }
+
 }

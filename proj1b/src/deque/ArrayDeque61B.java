@@ -1,7 +1,6 @@
 package deque;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.lang.Math;
 
 /*
@@ -11,10 +10,61 @@ import java.lang.Math;
 * nextFirst points to the left of the 1st valid element circularly
 * nextLast points to the right of the last valid element circularly
 * items.length are powers of 2 for ease of resizing
+*Invariant: iterIndex points to the next logical item to return,
+* and count = number of items already returned.
 *
 * */
 
 public class ArrayDeque61B<T> implements Deque61B<T> {
+
+    @Override
+    public String toString() {
+        return this.toList().toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        // if same pointer to the LLDeque object, dont even do any checks
+        if (this == other) { return true; }
+        // check if other is an instance of the Deque61B interface
+        if (other instanceof Deque61B<?> d) {
+            if (this.size() != d.size()) { return false; }
+            // check if items are equal positionally, i.e. [1,2,3] != [2,1,3] if though same elements and sizes
+            Iterator<T> thisIter = this.iterator();
+            Iterator<?> dIter = d.iterator();
+            while (thisIter.hasNext() && !dIter.hasNext()) {
+                T this_item = thisIter.next();
+                Object d_item = dIter.next();
+
+                if (!this_item.equals(d_item)) {return false; }
+            }
+            return true;
+        }
+        // other is not even a deque object, so return false
+        return false;
+    }
+
+    private class ArrayDeque61BIterator implements Iterator<T> {
+        // a pointer to point to the first element of our data nad keep moving
+        int iterIndex = Math.floorMod(nextFirst + 1, items.length);
+        int count = 0;
+        @Override
+        public boolean hasNext() {
+            // check if next item is valid
+            return count < size;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                return null;
+            }
+            T nextItem = items[iterIndex];
+            iterIndex = Math.floorMod(iterIndex + 1, items.length);
+            count++;
+            return nextItem;
+        }
+    }
     int size;
     T[] items;
     int nextFirst;
@@ -193,4 +243,8 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     }
 
 
+    @Override
+    public java.util.Iterator<T> iterator() {
+        return new ArrayDeque61BIterator();
+    }
 }

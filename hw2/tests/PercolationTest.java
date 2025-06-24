@@ -77,12 +77,73 @@ public class PercolationTest {
         assertThat(getState(N, p)).isEqualTo(expectedState);
         assertThat(p.percolates()).isTrue();
     }
-
-    // TODO: Using the given tests above as a template,
-    //       write some more tests and delete the fail() line
     @Test
-    public void yourFirstTestHere() {
-        fail("Did you write your own tests?");
+    public void testAllClosedInitially() {
+        Percolation p = new Percolation(3);
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                assertThat(p.isOpen(r, c)).isFalse();
+                assertThat(p.isFull(r, c)).isFalse();
+            }
+        }
+        assertThat(p.percolates()).isFalse();
+        assertThat(p.numberOfOpenSites()).isEqualTo(0);
     }
+
+    @Test
+    public void testFullSiteIsOnlyOpenAndConnectedToTop() {
+        Percolation p = new Percolation(3);
+        p.open(0, 1); // top row
+        p.open(1, 1);
+        p.open(2, 1); // now fully connected from top
+
+        assertThat(p.isFull(2, 1)).isTrue(); // full
+        assertThat(p.isFull(2, 0)).isFalse(); // not full
+        assertThat(p.numberOfOpenSites()).isEqualTo(3);
+    }
+
+    @Test
+    public void testBackwash() {
+        Percolation p = new Percolation(3);
+        p.open(0, 2);
+        p.open(1, 2);
+        p.open(2, 2); // creates path to bottom
+
+        // Connect a site at bottom row that's not connected to top
+        p.open(2, 0);
+
+        assertThat(p.percolates()).isTrue();
+        assertThat(p.isFull(2, 0)).isFalse(); // <- This ensures no backwash!
+    }
+
+    @Test
+    public void testPercolatesMinimalPath() {
+        Percolation p = new Percolation(3);
+        p.open(0, 1);
+        p.open(1, 1);
+        p.open(2, 1);
+
+        assertThat(p.percolates()).isTrue();
+        assertThat(p.numberOfOpenSites()).isEqualTo(3);
+    }
+
+    @Test
+    public void testPercolatesHorizontalNotEnough() {
+        Percolation p = new Percolation(3);
+        p.open(1, 0);
+        p.open(1, 1);
+        p.open(1, 2);
+
+        assertThat(p.percolates()).isFalse(); // can't percolate just horizontally
+    }
+
+    @Test
+    public void testPercolationStopsIfNoBottomConnection() {
+        Percolation p = new Percolation(3);
+        p.open(0, 1);
+        p.open(1, 1);
+        assertThat(p.percolates()).isFalse();
+    }
+
 
 }

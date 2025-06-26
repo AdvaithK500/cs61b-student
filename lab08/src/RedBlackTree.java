@@ -50,7 +50,12 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @param node
      */
     void flipColors(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
+        // what if node doesnt have both children? no flipping of colors needed
+        // flip the color of node
+        node.isBlack = !node.isBlack;
+        // flip the color of node's children
+        node.left.isBlack = !node.left.isBlack;
+        node.right.isBlack = !node.right.isBlack;
     }
 
     /**
@@ -61,8 +66,18 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        // set a pointer to left child of node
+        RBTreeNode<T> p = node.left;
+        // set left child to right child of p
+        node.left = p.right;
+        // set right child of p to node
+        p.right = node;
+
+        // set the colors
+        p.isBlack = node.isBlack;
+        node.isBlack = false;
+
+        return p;
     }
 
     /**
@@ -73,8 +88,18 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        // set a pointer to left child of node
+        RBTreeNode<T> p = node.right;
+        // set left child to right child of p
+        node.right = p.left;
+        // set right child of p to node
+        p.left = node;
+
+        // set the colors
+        p.isBlack = node.isBlack;
+        node.isBlack = false;
+
+        return p;
     }
 
     /**
@@ -106,16 +131,46 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     private RBTreeNode<T> insertHelper(RBTreeNode<T> node, T item) {
         // TODO: Insert (return) new red leaf node.
-
+        // Regular BST comparison to find the right position to insert
+        if (node == null) {
+            // the position to insert is found
+            //insert new red leaf node
+            return new RBTreeNode<>(false, item);
+        }
         // TODO: Handle normal binary search tree insertion.
+        int cmp = item.compareTo(node.item);
+        // if item > node's item, search right of tree
+        if (cmp > 0) {
+            node.right = insertHelper(node.right, item);
+        } else if (cmp < 0) {
+            // if item < node's item, search left of tree
+            node.left = insertHelper(node.left, item);
+        } else {
+            // insertion is done
+            return node;
+        }
+        // now node's left or right child points to the new node we created in the node == null condition
+        // then when teh else is entered above
+        // we go one call up in the stack
+        // so now the node points to the parent of the new node we inserted
+        // Now fix-up: handle Red-Black Tree invariants
 
-        // TODO: Rotate left operation
+        // Case 1: Right-leaning red link -> rotate left
+        if (isRed(node.right) && !isRed(node.left)) {
+            node = rotateLeft(node);
+        }
 
-        // TODO: Rotate right operation
+        // Case 2: Two consecutive left red links -> rotate right
+        if (isRed(node.left) && isRed(node.left.left)) {
+            node = rotateRight(node);
+        }
 
-        // TODO: Color flip
+        // Case 3: Both children are red -> flip colors
+        if (isRed(node.left) && isRed(node.right)) {
+            flipColors(node);
+        }
 
-        return null; //fix this return statement
+        return node;
     }
 
 }
